@@ -145,6 +145,22 @@ int main(int argc, const char *argv[])
     std::cout << "=== Simulation end ===" << std::endl << std::endl;
 
 
+    //resnet 10+5
+    //vww 2+22
+    //aww 12+8
+    constexpr etiss::uint8 res_size = 20;
+    etiss::uint8* buf = (etiss::uint8*)malloc(res_size*sizeof(etiss::uint8));
+    etiss::uint64 read_addr = 0x800100;
+    int a = dsys.dread(cpu->getState(), read_addr, buf, res_size);
+    if(a != 0){
+        return a;
+    }
+    std::cout << "Print out " << (unsigned)res_size << " bytes from memory data starting at: " << std::hex << (unsigned long)read_addr << std::endl;
+    for (size_t i = 0; i < res_size; i++)
+    {
+        std::cout << std::hex << (unsigned)buf[i] << "\n";
+    }
+    free(buf);
     // print the exception code returned by the cpu core
     std::cout << "CPU0 exited with exception: 0x" << std::hex << exception << std::dec << ": "
               << etiss::RETURNCODE::getErrorMessages()[exception] << std::endl;
