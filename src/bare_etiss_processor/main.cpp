@@ -140,6 +140,42 @@ int main(int argc, const char *argv[])
     //float endTime = (float)clock() / CLOCKS_PER_SEC;
     std::cout << "=== Simulation end ===" << std::endl << std::endl;
 
+ auto readWordFromMem{ [&dsys, &cpu](uint64_t addr) -> uint32_t
+                            {
+                                uint32_t ret{ 0 };
+                                etiss::uint8 buf[4];
+                                etiss::int32 a = dsys.dread(cpu->getState(), addr, buf, 4);
+                                if(a != 0){
+                                    throw etiss::RETURNCODE::DBUS_READ_ERROR;
+                                }
+                                ret = buf[0] | (buf[1] << 8) | (buf[2] << 16) | (buf[3] << 24);
+                                return ret;
+                            }
+                        };
+
+
+
+    //resnet 10+5
+    //vww 2+22
+    //aww 12+8
+    constexpr etiss::uint8 res_size = 24;
+    etiss::uint64 read_addr = 0x800100;
+    std::stringstream ss;
+    ss << "Print out " << (unsigned)res_size << " words from memory data starting at: " << std::hex << (unsigned long)read_addr << std::endl;
+
+    for (size_t i = 0; i < res_size; ++i)
+     {
+        int32_t value{ static_cast<int32_t>(readWordFromMem(read_addr + i * 4)) };
+        ss << value << ((i < (res_size-1)) ? ", " : " }");
+     }
+    std::cout << ss.str() << std::endl;
+
+
+    etiss::uint64 class_addr = 0x800000;
+    etiss::uint8* cat = (etiss::uint8*)malloc(4*sizeof(etiss::uint8));
+    dsys.dread(cpu->getState(), class_addr, cat, 4);
+    std::cout << "Print out predicted category: " <<  (unsigned)*cat << std::endl;
+    free(cat);
 
     // print the exception code returned by the cpu core
     std::cout << "CPU0 exited with exception: 0x" << std::hex << exception << std::dec << ": "
