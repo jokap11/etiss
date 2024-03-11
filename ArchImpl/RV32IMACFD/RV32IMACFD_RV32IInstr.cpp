@@ -2796,6 +2796,7 @@ static InstructionDefinition ebreak_ (
 		partInit.code() = std::string("//EBREAK\n");
 
 // -----------------------------------------------------------------------------
+partInit.code() += "return ETISS_RETURNCODE_CPUFINISHED; \n";
 partInit.code() += "cpu->instructionPointer = " + std::to_string(ic.current_address_ + 4U) + ";\n";
 partInit.code() += "exception = ETISS_RETURNCODE_CPUFINISHED;\n";
 partInit.code() += "return exception;\n";
