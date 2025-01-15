@@ -155,11 +155,12 @@ int main(int argc, const char *argv[])
 
 
 
-    //resnet 10+5
-    //vww 2+22
-    //aww 12+8
-    constexpr etiss::uint8 res_size = 24;
-    etiss::uint64 read_addr = 0x800100;
+    //resnet 10+22
+    //vww 2+58
+    //aww 12+22
+    //toycar 640+31
+    constexpr etiss::uint8 res_size = 60;
+    etiss::uint64 read_addr = 0xA00100;
     std::stringstream ss;
     ss << "Print out " << (unsigned)res_size << " words from memory data starting at: " << std::hex << (unsigned long)read_addr << std::endl;
 
@@ -171,7 +172,7 @@ int main(int argc, const char *argv[])
     std::cout << ss.str() << std::endl;
 
 
-    etiss::uint64 class_addr = 0x800000;
+    etiss::uint64 class_addr = 0xA00000;
     etiss::uint8* cat = (etiss::uint8*)malloc(4*sizeof(etiss::uint8));
     dsys.dread(cpu->getState(), class_addr, cat, 4);
     std::cout << "Print out predicted category: " <<  (unsigned)*cat << std::endl;
@@ -222,5 +223,3 @@ int main(int argc, const char *argv[])
         break;
     }
 }
-
-
