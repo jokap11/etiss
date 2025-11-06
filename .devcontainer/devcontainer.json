@@ -1,0 +1,39 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-dockerfile
+{
+	"name": "AIFES Arduino Run Environment",
+	"customizations": {
+		"vscode": {
+			"terminal.integrated.shell.linux": "bash",
+			"terminal.integrated.profiles.linux": {
+      			"bash (container default)": {
+        		"path": "/bin/bash",
+        		"overrideName": true
+      			}
+			},
+			"extensions": ["ms-vscode.cpptools-extension-pack"]
+		}
+	},
+	"remoteUser": "${localEnv:USER}",
+	"build": {
+    	"dockerfile": "Dockerfile",
+    	"context": ".",
+		"args": {
+			"USERNAME": "${localEnv:USER}",
+			"USER_UID": "1000",
+			"USER_GID": "1000"
+		}
+  	},
+	// Mount multiple folders
+  	"workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/etiss,type=bind",
+  	"workspaceFolder": "/workspaces/etiss",
+	  // Add an extra mount for your second folder
+  	"mounts": [
+    "source=${localWorkspaceFolder}/../etiss_riscv_examples,type=bind,target=/workspaces/etiss_riscv_examples"
+  	],
+	"runArgs": [
+		"-e", "DISPLAY=${env:DISPLAY}",
+		"-v", "/tmp/.X11-unix:/tmp/.X11-unix" // Enable GUI applications for WayLand only host
+	],
+	"postCreateCommand": "mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=`pwd`/installed .. && make -j$(nproc) && make install"
+}
